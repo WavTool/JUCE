@@ -1123,13 +1123,9 @@ public:
 
                 if ((streamFlags & wantStdOut) != 0)
                     dup2 (pipeHandles[1], STDOUT_FILENO); // turns the pipe into stdout
-                else
-                    dup2 (open ("/dev/null", O_WRONLY), STDOUT_FILENO);
 
                 if ((streamFlags & wantStdErr) != 0)
                     dup2 (pipeHandles[1], STDERR_FILENO);
-                else
-                    dup2 (open ("/dev/null", O_WRONLY), STDERR_FILENO);
 
                 close (pipeHandles[1]);
 
