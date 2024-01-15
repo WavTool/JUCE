@@ -172,7 +172,8 @@ public:
     bool launchWorkerProcess (const File& executableToLaunch,
                               const String& commandLineUniqueID,
                               int timeoutMs = 0,
-                              int streamFlags = ChildProcess::wantStdOut | ChildProcess::wantStdErr);
+                              int streamFlags = ChildProcess::wantStdOut | ChildProcess::wantStdErr,
+                              const String& architecture = "native");
 
     [[deprecated ("Replaced by launchWorkerProcess.")]]
     bool launchSlaveProcess (const File& executableToLaunch,
