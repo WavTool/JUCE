@@ -96,23 +96,33 @@ bool PluginDirectoryScanner::scanNextFile (bool dontRescanIfAlreadyInList,
             OwnedArray<PluginDescription> typesFound;
 
             // Add this plugin to the end of the dead-man's pedal list in case it crashes...
-            auto crashedPlugins = readDeadMansPedalFile (deadMansPedalFile);
-            crashedPlugins.removeString (file);
-            crashedPlugins.add (file);
-            setDeadMansPedalFile (crashedPlugins);
+            {
+                ScopedLock sl(mutex);
+                auto crashedPlugins = readDeadMansPedalFile (deadMansPedalFile);
+                crashedPlugins.removeString (file);
+                crashedPlugins.add (file);
+                setDeadMansPedalFile (crashedPlugins);
+            }
 
             list.scanAndAddFile (file, dontRescanIfAlreadyInList, typesFound, format);
 
             // Managed to load without crashing, so remove it from the dead-man's-pedal..
-            crashedPlugins.removeString (file);
-            setDeadMansPedalFile (crashedPlugins);
-
-            if (typesFound.size() == 0 && ! list.getBlacklistedFiles().contains (file))
-                failedFiles.add (file);
+            {
+                ScopedLock sl(mutex);
+                auto crashedPlugins = readDeadMansPedalFile (deadMansPedalFile);
+                crashedPlugins.removeString (file);
+                setDeadMansPedalFile (crashedPlugins);
+                
+                if (typesFound.size() == 0 && ! list.getBlacklistedFiles().contains (file))
+                    failedFiles.add (file);
+            }
         }
     }
 
-    updateProgress();
+    {
+        ScopedLock sl(mutex);
+        updateProgress();
+    }
     return index > 0;
 }
 

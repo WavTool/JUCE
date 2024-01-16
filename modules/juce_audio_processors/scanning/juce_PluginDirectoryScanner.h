@@ -125,9 +125,11 @@ private:
     StringArray filesOrIdentifiersToScan;
     File deadMansPedalFile;
     StringArray failedFiles;
+    
     Atomic<int> nextIndex;
     std::atomic<float> progress { 0.0f };
     const bool allowAsync;
+    CriticalSection mutex;
 
     void updateProgress();
     void setDeadMansPedalFile (const StringArray& newContents);
