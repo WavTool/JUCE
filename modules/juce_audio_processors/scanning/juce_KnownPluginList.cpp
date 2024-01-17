@@ -183,8 +183,10 @@ bool KnownPluginList::scanAndAddFile (const String& fileOrIdentifier,
 
         if (scanner != nullptr)
         {
-            if (! scanner->findPluginTypesFor (format, found, fileOrIdentifier))
+            if (! scanner->findPluginTypesFor (format, found, fileOrIdentifier)) {
+                const ScopedLock sl3 (scanLock);
                 addToBlacklist (fileOrIdentifier);
+            }
         }
         else
         {
