@@ -361,6 +361,11 @@ bool InterprocessConnection::readNextMessage()
                 auto numThisTime = jmin (bytesInMessage, 65536);
                 auto bytesIn = readData (addBytesToPointer (messageData.getData(), bytesRead), numThisTime);
 
+                if (bytesIn < 0) {
+                    const ScopedReadLock sl(pipeAndSocketLock);
+                    if (socket != nullptr)  socket->close();
+                    if (pipe != nullptr)    pipe->close();
+                }
                 if (bytesIn <= 0)
                     break;
 
@@ -377,6 +382,11 @@ bool InterprocessConnection::readNextMessage()
 
     if (bytes < 0)
     {
+        {
+            const ScopedReadLock sl(pipeAndSocketLock);
+            if (socket != nullptr)  socket->close();
+            if (pipe != nullptr)    pipe->close();
+        }
         if (socket != nullptr)
             deletePipeAndSocket();
 

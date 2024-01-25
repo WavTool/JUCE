@@ -433,11 +433,20 @@ public:
 
             startupInfo.hStdOutput = (streamFlags & wantStdOut) != 0 ? writePipe : nullptr;
             startupInfo.hStdError  = (streamFlags & wantStdErr) != 0 ? writePipe : nullptr;
+#ifdef NDEBUG
             startupInfo.dwFlags = STARTF_USESTDHANDLES;
+#else
+            startupInfo.dwFlags = 0;
+#endif
 
             JUCE_BEGIN_IGNORE_WARNINGS_MSVC (6335)
             ok = CreateProcess (nullptr, const_cast<LPWSTR> (command.toWideCharPointer()),
-                                nullptr, nullptr, TRUE, CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT,
+                                nullptr, nullptr, TRUE,
+#ifdef NDEBUG
+                CREATE_NO_WINDOW | CREATE_UNICODE_ENVIRONMENT,
+#else
+                CREATE_NEW_CONSOLE | CREATE_UNICODE_ENVIRONMENT,
+#endif
                                 nullptr, nullptr, &startupInfo, &processInfo) != FALSE;
             JUCE_END_IGNORE_WARNINGS_MSVC
         }

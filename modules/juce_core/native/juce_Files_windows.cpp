@@ -1186,8 +1186,12 @@ public:
 
             const auto lastError = GetLastError();
 
-            if (ownsPipe && (lastError == ERROR_BROKEN_PIPE || lastError == ERROR_PIPE_NOT_CONNECTED))
+            if (ownsPipe && (lastError == ERROR_BROKEN_PIPE || lastError == ERROR_PIPE_NOT_CONNECTED)) {
                 disconnectPipe();
+                if (lastError == ERROR_BROKEN_PIPE) {
+                    break;
+                }
+            }
             else
                 break;
         }
@@ -1216,8 +1220,9 @@ public:
                 if (GetOverlappedResult (pipeH, &over.over, &numWritten, FALSE))
                     return (int) numWritten;
 
-                if (GetLastError() == ERROR_BROKEN_PIPE && ownsPipe)
+                if (GetLastError() == ERROR_BROKEN_PIPE && ownsPipe) {
                     disconnectPipe();
+                }
             }
         }
 
