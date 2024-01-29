@@ -237,6 +237,14 @@ std::unique_ptr<ScopedMessageBoxInterface> ScopedMessageBoxInterface::create (co
             return getTaskDialogFunc() != nullptr;
         }
 
+        void setDialogWindowHandle(HWND handle)
+        {
+            WindowsMessageBoxBase::setDialogWindowHandle(handle);
+            if (handle) {
+                SetWindowPos(handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+            }
+        }
+
     private:
         std::function<int()> getShowMessageBoxForParent (const HWND parent) override
         {
