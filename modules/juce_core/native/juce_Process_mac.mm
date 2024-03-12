@@ -29,7 +29,6 @@ void Process::setDockIconVisible (bool isVisible)
 
     [[maybe_unused]] OSStatus err = TransformProcessType (&psn, isVisible ? kProcessTransformToForegroundApplication
                                                                           : kProcessTransformToUIElementApplication);
-    jassert (err == 0);
 }
 #endif
 
